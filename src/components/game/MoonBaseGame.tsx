@@ -110,7 +110,7 @@ export function MoonBaseGame() {
     // When the walk finishes, the astronaut steps inside the building.
     const t = window.setTimeout(() => {
       setWalking(false);
-      setInside(BUILDINGS[astronautAt].id);
+      setInside(BUILDINGS[astronautAt]?.id ?? null);
     }, 700);
     return () => window.clearTimeout(t);
   }, [walking, astronautAt]);
