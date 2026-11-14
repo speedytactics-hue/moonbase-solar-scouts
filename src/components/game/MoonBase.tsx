@@ -1,5 +1,5 @@
 import { BUILDING_COOLDOWN, type BuildingId, type GameState } from "@/game/engine";
-import { BUILDINGS } from "@/game/content";
+import { MAIN_BUILDINGS } from "@/game/content";
 import { cn } from "@/lib/utils";
 import { BuildingScene, type SceneAction } from "./BuildingScene";
 
@@ -21,7 +21,7 @@ interface Props {
   onInfo: (id: BuildingId) => void;
 }
 
-const centerOf = (index: number) => `${((index + 0.5) / BUILDINGS.length) * 100}%`;
+const centerOf = (index: number) => `${((index + 0.5) / MAIN_BUILDINGS.length) * 100}%`;
 
 export function MoonBase({
   game,
@@ -44,7 +44,14 @@ export function MoonBase({
       {/* Scene: outside sky while walking, or the inside of the building you're in */}
       <div className="bg-space relative h-48 sm:h-64">
         {inside ? (
-          <BuildingScene key={inside} id={inside} action={action} storm={storm} />
+          <BuildingScene
+            key={inside}
+            id={inside}
+            action={action}
+            storm={storm}
+            cooldown={game.cooldowns[inside === "habitat" ? "airlock" : "habitat"]}
+            onGo={(id) => onBuilding(id, astronautAt)}
+          />
         ) : (
           <>
             <div className="starfield absolute inset-0" aria-hidden />
@@ -105,8 +112,8 @@ export function MoonBase({
         </div>
 
         {/* Buildings */}
-        <div className="grid grid-cols-5 gap-2 sm:gap-4">
-          {BUILDINGS.map((b, index) => {
+        <div className="grid grid-cols-4 gap-2 sm:gap-4">
+          {MAIN_BUILDINGS.map((b, index) => {
             const cooling = game.cooldowns[b.id] > 0;
             const shelterTarget = storm && b.id === "habitat";
             const here = inside === b.id;

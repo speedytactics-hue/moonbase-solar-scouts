@@ -19,7 +19,7 @@ import {
   type Resources,
 } from "@/game/engine";
 import {
-  BUILDINGS,
+  MAIN_BUILDINGS,
   BUILDING_BY_ID,
   FAILURE_FACTS,
   RESOURCE_BY_KEY,
@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 type Screen = "start" | "launching" | "playing" | "won" | "lost";
 type Popup = { kind: "building"; id: BuildingId } | { kind: "storm" };
 
-const HABITAT_INDEX = 4;
+const HABITAT_INDEX = MAIN_BUILDINGS.findIndex((b) => b.id === "habitat");
 const TICK_MS = 100;
 
 function describeChanges(changes: Partial<Resources>) {
@@ -110,7 +110,7 @@ export function MoonBaseGame() {
     // When the walk finishes, the astronaut steps inside the building.
     const t = window.setTimeout(() => {
       setWalking(false);
-      setInside(BUILDINGS[astronautAt]?.id ?? null);
+      setInside(MAIN_BUILDINGS[astronautAt]?.id ?? null);
     }, 700);
     return () => window.clearTimeout(t);
   }, [walking, astronautAt]);
@@ -144,6 +144,8 @@ export function MoonBaseGame() {
       setInside(null); // step outside and walk over
       setAstronautAt(index);
       setWalking(true);
+    } else {
+      setInside(id); // e.g. stepping between the Habitat and its Airlock
     }
 
     const { state, result } = operateBuilding(gameRef.current, id);

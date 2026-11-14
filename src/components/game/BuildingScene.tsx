@@ -78,9 +78,16 @@ interface Props {
   id: BuildingId;
   action: SceneAction | null;
   storm: boolean;
+  /** Cooldown (seconds) of the room the door leads to. */
+  cooldown: number;
+  onGo: (id: BuildingId) => void;
 }
 
-export function BuildingScene({ id, action, storm }: Props) {
+// Rooms connected by a door inside the scene.
+const DOORS: Partial<Record<BuildingId, BuildingId>> = { habitat: "airlock", airlock: "habitat" };
+
+export function BuildingScene({ id, action, storm, cooldown, onGo }: Props) {
+  const door = DOORS[id];
   const info = BUILDING_BY_ID[id];
   const active = action && action.id === id ? action : null;
   const props = active
@@ -138,6 +145,21 @@ export function BuildingScene({ id, action, storm }: Props) {
             ))}
         </div>
       </div>
+
+      {door && (
+        <button
+          type="button"
+          onClick={() => onGo(door)}
+          className={cn(
+            "arcade absolute bottom-4 left-3 z-10 rounded-2xl px-3 py-2 font-display text-sm font-semibold sm:text-lg",
+            BUILDING_BY_ID[door].tone,
+            cooldown > 0 && "opacity-75",
+          )}
+          aria-label={`${door === "airlock" ? "Go to the" : "Back to the"} ${BUILDING_BY_ID[door].name}: ${BUILDING_BY_ID[door].effect}`}
+        >
+          {BUILDING_BY_ID[door].emoji} {door === "airlock" ? "Go to Airlock" : "Back to Habitat"}
+        </button>
+      )}
 
       {caption && (
         <p
