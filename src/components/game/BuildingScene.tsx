@@ -103,7 +103,7 @@ export function BuildingScene({ id, action, storm }: Props) {
         <div className="animate-storm-flash pointer-events-none absolute inset-0" aria-hidden />
       )}
 
-      <p className="absolute bottom-3 left-3 z-10 rounded-full bg-card/85 px-3 py-1 font-display text-xs font-semibold text-card-foreground shadow-panel sm:text-base">
+      <p className="absolute top-3 left-3 z-10 max-w-[45%] rounded-full bg-card/85 px-3 py-1 font-display text-xs font-semibold text-card-foreground shadow-panel sm:text-base">
         {info.emoji} {info.insideTitle}
       </p>
 
@@ -142,7 +142,7 @@ export function BuildingScene({ id, action, storm }: Props) {
       {caption && (
         <p
           key={`caption-${active!.key}`}
-          className="animate-pop-in absolute right-3 bottom-3 z-10 max-w-[55%] rounded-2xl bg-popover px-3 py-1.5 text-right font-display text-xs font-semibold text-popover-foreground shadow-panel sm:text-base"
+          className="animate-pop-in absolute top-3 right-3 z-10 max-w-[50%] rounded-2xl bg-popover px-3 py-1.5 text-right font-display text-xs font-semibold text-popover-foreground shadow-panel sm:text-base"
         >
           {caption}
         </p>
