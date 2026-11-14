@@ -95,12 +95,15 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
                   className={cn(
                     "arcade flex w-full flex-col items-center gap-1 overflow-hidden rounded-3xl px-1 pt-3 pb-4 sm:pt-4 sm:pb-5",
                     b.tone,
-                    shelterTarget && "animate-wobble ring-4 ring-danger",
+                    shelterTarget && "ring-4 ring-danger",
                     cooling && !shelterTarget && "opacity-75",
                   )}
                   aria-label={`${b.name}: ${b.effect}`}
                 >
-                  <span className="text-3xl sm:text-5xl" aria-hidden>
+                  <span
+                    className={cn("text-3xl sm:text-5xl", shelterTarget && "animate-wobble")}
+                    aria-hidden
+                  >
                     {b.emoji}
                   </span>
                   <span className="font-display text-[11px] leading-tight font-semibold sm:text-base">
