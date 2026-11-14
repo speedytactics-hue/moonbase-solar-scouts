@@ -113,6 +113,9 @@ export const BUILDINGS: BuildingInfo[] = [
   },
 ];
 
+/** Buildings on the main row. The Airlock is reached from inside the Habitat. */
+export const MAIN_BUILDINGS = BUILDINGS.filter((b) => b.id !== "airlock");
+
 export const BUILDING_BY_ID = Object.fromEntries(BUILDINGS.map((b) => [b.id, b])) as Record<
   BuildingId,
   BuildingInfo
