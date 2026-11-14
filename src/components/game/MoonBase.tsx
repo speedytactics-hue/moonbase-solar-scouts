@@ -1,6 +1,7 @@
 import { BUILDING_COOLDOWN, type BuildingId, type GameState } from "@/game/engine";
 import { BUILDINGS } from "@/game/content";
 import { cn } from "@/lib/utils";
+import { BuildingScene, type SceneAction } from "./BuildingScene";
 
 export interface Pop {
   id: number;
@@ -14,13 +15,25 @@ interface Props {
   facing: 1 | -1;
   walking: boolean;
   pops: Pop[];
+  inside: BuildingId | null;
+  action: SceneAction | null;
   onBuilding: (id: BuildingId, index: number) => void;
   onInfo: (id: BuildingId) => void;
 }
 
 const centerOf = (index: number) => `${((index + 0.5) / BUILDINGS.length) * 100}%`;
 
-export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding, onInfo }: Props) {
+export function MoonBase({
+  game,
+  astronautAt,
+  facing,
+  walking,
+  pops,
+  inside,
+  action,
+  onBuilding,
+  onInfo,
+}: Props) {
   const storm = game.storm.active;
 
   return (
@@ -28,23 +41,29 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
       className="relative overflow-hidden rounded-[2rem] border-4 border-border shadow-panel"
       aria-label="Moon base"
     >
-      {/* Sky */}
-      <div className="bg-space relative h-36 sm:h-52">
-        <div className="starfield absolute inset-0" aria-hidden />
-        <span className="animate-float absolute top-4 right-6 text-5xl sm:text-7xl" aria-hidden>
-          🌍
-        </span>
-        <span className="absolute top-6 left-6 text-3xl opacity-90 sm:text-4xl" aria-hidden>
-          {storm ? "🌞" : "☀️"}
-        </span>
-        <span className="absolute bottom-3 left-[38%] text-2xl opacity-80" aria-hidden>
-          🛰️
-        </span>
+      {/* Scene: outside sky while walking, or the inside of the building you're in */}
+      <div className="bg-space relative h-48 sm:h-64">
+        {inside ? (
+          <BuildingScene key={inside} id={inside} action={action} storm={storm} />
+        ) : (
+          <>
+            <div className="starfield absolute inset-0" aria-hidden />
+            <span className="animate-float absolute top-4 right-6 text-5xl sm:text-7xl" aria-hidden>
+              🌍
+            </span>
+            <span className="absolute top-6 left-6 text-3xl opacity-90 sm:text-4xl" aria-hidden>
+              {storm ? "🌞" : "☀️"}
+            </span>
+            <span className="absolute bottom-3 left-[38%] text-2xl opacity-80" aria-hidden>
+              🛰️
+            </span>
+          </>
+        )}
 
         {storm && (
           <div
             role="alert"
-            className="animate-pop-in absolute inset-x-3 top-1/2 z-10 -translate-y-1/2 rounded-3xl bg-danger px-4 py-3 text-center text-destructive-foreground shadow-panel sm:inset-x-10"
+            className="animate-pop-in absolute inset-x-3 top-3 z-20 rounded-3xl bg-danger px-4 py-2 text-center text-destructive-foreground shadow-panel sm:inset-x-10 sm:py-3"
           >
             <p className="font-display text-xl font-semibold sm:text-3xl">⚠️ SOLAR STORM! ⚠️</p>
             <p className="text-sm font-bold sm:text-base">
@@ -59,7 +78,10 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
         {/* Astronaut lane */}
         <div className="relative h-16 sm:h-20">
           <div
-            className="absolute bottom-0 -translate-x-1/2 transition-[left] duration-700 ease-in-out"
+            className={cn(
+              "absolute bottom-0 -translate-x-1/2 transition-[left,opacity] duration-700 ease-in-out",
+              inside && "opacity-0",
+            )}
             style={{ left: centerOf(astronautAt) }}
           >
             <span
@@ -87,6 +109,7 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
           {BUILDINGS.map((b, index) => {
             const cooling = game.cooldowns[b.id] > 0;
             const shelterTarget = storm && b.id === "habitat";
+            const here = inside === b.id;
             return (
               <div key={b.id} className="relative">
                 <button
@@ -96,6 +119,7 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
                     "arcade flex w-full flex-col items-center gap-1 overflow-hidden rounded-3xl px-1 pt-3 pb-4 sm:pt-4 sm:pb-5",
                     b.tone,
                     shelterTarget && "ring-4 ring-danger",
+                    here && !shelterTarget && "ring-4 ring-accent",
                     cooling && !shelterTarget && "opacity-75",
                   )}
                   aria-label={`${b.name}: ${b.effect}`}
@@ -121,6 +145,15 @@ export function MoonBase({ game, astronautAt, facing, walking, pops, onBuilding,
                     </span>
                   )}
                 </button>
+                {here && (
+                  <span
+                    className="animate-pop-in absolute -top-2 -left-1 z-10 grid h-7 w-7 place-items-center rounded-full border-2 border-accent bg-popover text-base shadow-panel sm:h-8 sm:w-8"
+                    title="Your astronaut is here"
+                    aria-hidden
+                  >
+                    👨‍🚀
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={() => onInfo(b.id)}

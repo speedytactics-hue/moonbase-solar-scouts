@@ -27,6 +27,10 @@ export interface BuildingInfo {
   emoji: string;
   tone: string;
   effect: string;
+  /** Shown when the astronaut is inside this building. */
+  insideTitle: string;
+  /** What the astronaut is doing inside after a successful tap. */
+  activity: string;
   scienceTitle: string;
   science: string[];
 }
@@ -38,6 +42,8 @@ export const BUILDINGS: BuildingInfo[] = [
     emoji: "🚪",
     tone: "tone-safety",
     effect: "Cleans moon dust: +12 Safety, uses 3 Power",
+    insideTitle: "Inside the Airlock",
+    activity: "Whoosh! Blowing sharp moon dust off your suit",
     scienceTitle: "Moon dust is sharp like glass!",
     science: [
       "Moon dust (scientists call it regolith) is not soft like beach sand. The Moon has no wind or water to smooth it, so every tiny grain stays sharp and jagged, like little bits of broken glass.",
@@ -51,6 +57,8 @@ export const BUILDINGS: BuildingInfo[] = [
     emoji: "☀️",
     tone: "tone-power",
     effect: "+22 Power, but going outside: −5 Safety",
+    insideTitle: "Outside at the Solar Farm",
+    activity: "Wiping dust off the solar panels",
     scienceTitle: "Power from the Sun",
     science: [
       "Solar panels turn sunlight into electricity for lights, heaters, computers and air machines.",
@@ -64,6 +72,8 @@ export const BUILDINGS: BuildingInfo[] = [
     emoji: "🌱",
     tone: "tone-food",
     effect: "+15 Food, +10 Oxygen, grow lights use 8 Power",
+    insideTitle: "Inside the Greenhouse",
+    activity: "Watering the space plants. Look, they're growing!",
     scienceTitle: "Space gardens make food AND air",
     science: [
       "Plants are a crew's best friends. They grow food, and through photosynthesis they breathe out fresh oxygen.",
@@ -77,6 +87,8 @@ export const BUILDINGS: BuildingInfo[] = [
     emoji: "💧",
     tone: "tone-water",
     effect: "+18 Water, uses 6 Power",
+    insideTitle: "Inside the Water Recycler",
+    activity: "Cleaning water so the crew can drink it",
     scienceTitle: "98% of water gets recycled",
     science: [
       "Water is very heavy, so launching it from Earth is expensive. Space crews recycle every drop they can.",
@@ -90,6 +102,8 @@ export const BUILDINGS: BuildingInfo[] = [
     emoji: "🏠",
     tone: "tone-primary",
     effect: "+18 Oxygen. In a solar storm: hide the crew, +30 Safety",
+    insideTitle: "Inside the Habitat",
+    activity: "Breathing fresh air at home",
     scienceTitle: "Home sweet Moon home",
     science: [
       "The habitat is the crew's home: a sealed building filled with air to breathe, kept at a comfy temperature.",
@@ -103,6 +117,8 @@ export const BUILDING_BY_ID = Object.fromEntries(BUILDINGS.map((b) => [b.id, b])
   BuildingId,
   BuildingInfo
 >;
+
+export const SHELTER_ACTIVITY = "The whole crew is hiding safely inside the Habitat!";
 
 export const STORM_SCIENCE = {
   emoji: "🌞",

@@ -4,6 +4,7 @@ import { Volume2, VolumeX } from "lucide-react";
 import rocket from "@/assets/rocket.png";
 import { Button } from "@/components/ui/button";
 import { MoonBase, type Pop } from "./MoonBase";
+import type { SceneAction } from "./BuildingScene";
 import { ResourceHud } from "./ResourceHud";
 import { SciencePopup } from "./SciencePopup";
 import {
@@ -18,6 +19,7 @@ import {
   type Resources,
 } from "@/game/engine";
 import {
+  BUILDINGS,
   BUILDING_BY_ID,
   FAILURE_FACTS,
   RESOURCE_BY_KEY,
@@ -47,6 +49,9 @@ export function MoonBaseGame() {
   const [astronautAt, setAstronautAt] = useState(HABITAT_INDEX);
   const [facing, setFacing] = useState<1 | -1>(1);
   const [walking, setWalking] = useState(false);
+  const [inside, setInside] = useState<BuildingId | null>("habitat");
+  const [action, setAction] = useState<SceneAction | null>(null);
+  const actionId = useRef(0);
   const [popup, setPopup] = useState<Popup | null>(null);
   const seenRef = useRef(new Set<string>());
   const [pops, setPops] = useState<Pop[]>([]);
@@ -102,7 +107,11 @@ export function MoonBaseGame() {
 
   useEffect(() => {
     if (!walking) return;
-    const t = window.setTimeout(() => setWalking(false), 700);
+    // When the walk finishes, the astronaut steps inside the building.
+    const t = window.setTimeout(() => {
+      setWalking(false);
+      setInside(BUILDINGS[astronautAt]?.id ?? null);
+    }, 700);
     return () => window.clearTimeout(t);
   }, [walking, astronautAt]);
 
@@ -119,6 +128,8 @@ export function MoonBaseGame() {
     window.setTimeout(() => {
       commit(createGame());
       setAstronautAt(HABITAT_INDEX);
+      setInside("habitat");
+      setAction(null);
       setPops([]);
       setPopup(null);
       setLog("Welcome to the Moon! Tap a building to send your astronaut to work.");
@@ -130,6 +141,7 @@ export function MoonBaseGame() {
     if (paused) return;
     if (index !== astronautAt) {
       setFacing(index > astronautAt ? 1 : -1);
+      setInside(null); // step outside and walk over
       setAstronautAt(index);
       setWalking(true);
     }
@@ -141,6 +153,7 @@ export function MoonBaseGame() {
       case "used":
         sfx.gain();
         commit(state);
+        setAction({ key: ++actionId.current, id, kind: "used" });
         addPop(index, describeChanges(result.changes));
         setLog(`${info.emoji} ${info.name}: ${info.effect}`);
         if (!seenRef.current.has(id)) {
@@ -151,6 +164,7 @@ export function MoonBaseGame() {
       case "sheltered":
         sfx.shelter();
         commit(state);
+        setAction({ key: ++actionId.current, id, kind: "sheltered" });
         addPop(index, describeChanges(result.changes));
         setLog("🏠 Crew is safe inside the Habitat! The storm is over.");
         if (!seenRef.current.has("storm")) {
@@ -215,6 +229,8 @@ export function MoonBaseGame() {
             facing={facing}
             walking={walking}
             pops={pops}
+            inside={inside}
+            action={action}
             onBuilding={onBuilding}
             onInfo={onInfo}
           />

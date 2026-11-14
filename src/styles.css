@@ -306,3 +306,46 @@
 @utility animate-launch { animation: launch 1.8s cubic-bezier(0.55, 0, 0.75, 0.2) forwards; }
 @utility animate-pop-in { animation: pop-in 0.35s ease-out both; }
 @utility animate-wobble { animation: wobble 0.8s ease-in-out infinite; }
+
+/* ---------- Inside-building activities ---------- */
+@keyframes scene-in {
+  0% { opacity: 0; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes act-rise {
+  0% { transform: translateY(10px) scale(0.6); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+}
+@keyframes act-fall {
+  0% { transform: translateY(-30px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(34px); opacity: 0; }
+}
+@keyframes act-grow {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes act-wipe {
+  0%, 100% { transform: translateX(-14px) rotate(-12deg); }
+  50% { transform: translateX(14px) rotate(12deg); }
+}
+@keyframes act-blow {
+  0% { transform: translateX(0) scale(0.6); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateX(-56px) scale(1.2); opacity: 0; }
+}
+@keyframes act-work {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-10px) rotate(-6deg); }
+  75% { transform: translateY(-4px) rotate(6deg); }
+}
+@utility animate-scene-in { animation: scene-in 0.45s ease-out both; }
+@utility animate-act-rise { animation: act-rise 1.6s ease-out both; }
+@utility animate-act-fall { animation: act-fall 0.9s ease-in both; }
+@utility animate-act-grow { animation: act-grow 0.9s ease-out both; }
+@utility animate-act-wipe { animation: act-wipe 0.45s ease-in-out 5 both; }
+@utility animate-act-blow { animation: act-blow 1.1s ease-out both; }
+@utility animate-act-work { animation: act-work 0.5s ease-in-out 3; }
+@utility animate-idle { animation: bob 2.4s ease-in-out infinite; }
