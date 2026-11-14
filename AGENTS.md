@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Game rules live in `src/game/engine.ts` as pure TypeScript (no React/DOM) with tests in `src/game/engine.test.ts`; UI in `src/components/game/` only renders state and calls `tick`/`operateBuilding`. Why: balance changes stay testable and isolated from the UI.
+- Kid-facing text and NASA facts live in `src/game/content.ts`. Why: science copy can be reviewed and edited in one place.
+- Sound effects are synthesized with Web Audio in `src/game/audio.ts` (no audio files). Why: no asset loading, works offline.
